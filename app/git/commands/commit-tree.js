@@ -11,22 +11,34 @@ class CommitTreeCommand {
   }
 
   execute() {
-    const commitContentBuffer = Buffer.concat([
-      Buffer.from(`tree ${this.tree}\n`),
-      Buffer.from(`parent ${this.parentSHA}\n`),
-      Buffer.from(
-        `author John Doe <johnDoe@gmail.com> ${Math.floor(
-          Date.now() / 1000
-        )} +0000\n`
-      ),
-      Buffer.from(
-        `committer John Doe <johnDoe@gmail.com> ${Math.floor(
-          Date.now() / 1000
-        )} +0000\n`
-      ),
-      Buffer.from(`\n${this.commitMessage}\n`),
-    ]);
+    const contentParts = [];
 
+    // Always add the tree
+    contentParts.push(Buffer.from(`tree ${this.tree}\n`));
+
+    // FIX: Only add the parent line if a parent SHA exists
+    if (this.parentSHA) {
+      contentParts.push(Buffer.from(`parent ${this.parentSHA}\n`));
+    }
+
+    // Get the timestamp once
+    const timestamp = `${Math.floor(Date.now() / 1000)} +0530`; // Using IST as an example
+
+    // Add author and committer info
+    contentParts.push(
+      Buffer.from(`author John Doe <johnDoe@gmail.com> ${timestamp}\n`)
+    );
+    contentParts.push(
+      Buffer.from(`committer John Doe <johnDoe@gmail.com> ${timestamp}\n`)
+    );
+
+    // Add the commit message
+    contentParts.push(Buffer.from(`\n${this.commitMessage}\n`));
+
+    // Build the final content buffer from the parts
+    const commitContentBuffer = Buffer.concat(contentParts);
+
+    // --- The rest of your code is correct ---
     const commitHeader = `commit ${commitContentBuffer.length}\0`;
     const commitBuffer = Buffer.concat([
       Buffer.from(commitHeader),
