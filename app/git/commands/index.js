@@ -7,6 +7,7 @@ const AddCommand = require("./add");
 const CommitCommand = require("./commit");
 const BranchCommand = require("./branch");
 const CheckoutCommand = require("./checkout");
+const MergeCommand = require("./merge");
 
 module.exports = {
   CatFileCommand,
@@ -18,4 +19,5 @@ module.exports = {
   CommitCommand,
   BranchCommand,
   CheckoutCommand,
+  MergeCommand,
 };

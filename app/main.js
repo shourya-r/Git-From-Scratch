@@ -14,6 +14,7 @@ const {
   CommitCommand,
   BranchCommand,
   CheckoutCommand,
+  MergeCommand,
 } = require("./git/commands");
 
 const gitClient = new GitClient();
@@ -50,6 +51,9 @@ switch (command) {
     break;
   case "checkout":
     handleCheckoutCommand();
+    break;
+  case "merge":
+    handleMergeCommand();
     break;
   default:
     throw new Error(`Unknown command ${command}`);
@@ -157,5 +161,15 @@ function handleCheckoutCommand() {
     process.exit(128);
   }
   const command = new CheckoutCommand(branchName);
+  command.execute();
+}
+
+function handleMergeCommand() {
+  const branchToMerge = process.argv[3];
+  if (!branchToMerge) {
+    console.error("fatal: No branch specified to merge.");
+    process.exit(128);
+  }
+  const command = new MergeCommand(branchToMerge);
   command.execute();
 }
