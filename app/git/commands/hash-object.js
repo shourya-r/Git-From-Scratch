@@ -23,7 +23,7 @@ class HashObjectCommand {
     const fileLength = fileContent.length;
 
     // create the blob object
-    const header = `blob ${fileLength}\0$`;
+    const header = `blob ${fileLength}\0`;
     const blob = Buffer.concat([Buffer.from(header), fileContent]);
 
     // calculate the SHA-1 hash
@@ -45,7 +45,7 @@ class HashObjectCommand {
       fs.writeFileSync(path.join(folderPath, file), compressedContent);
     }
 
-    process.stdout.write(hash);
+    process.stdout.write(`${hash}\n`);
   }
 }
 

@@ -44,8 +44,8 @@ function handleCatFileCommand() {
 }
 
 function handleHashObjectCommand() {
-  const flag = process.argv[3];
-  const filePath = process.argv[4];
+  let flag = process.argv[3];
+  let filePath = process.argv[4];
 
   if (!filePath) {
     filePath = flag;
