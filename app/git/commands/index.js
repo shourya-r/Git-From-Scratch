@@ -5,6 +5,9 @@ const WriteTreeCommand = require("./write-tree");
 const CommitTreeCommand = require("./commit-tree");
 const AddCommand = require("./add");
 const CommitCommand = require("./commit");
+const BranchCommand = require("./branch");
+const CheckoutCommand = require("./checkout");
+
 module.exports = {
   CatFileCommand,
   HashObjectCommand,
@@ -13,4 +16,6 @@ module.exports = {
   AddCommand,
   CommitTreeCommand,
   CommitCommand,
+  BranchCommand,
+  CheckoutCommand,
 };

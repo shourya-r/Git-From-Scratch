@@ -12,6 +12,8 @@ const {
   CommitTreeCommand,
   AddCommand,
   CommitCommand,
+  BranchCommand,
+  CheckoutCommand,
 } = require("./git/commands");
 
 const gitClient = new GitClient();
@@ -42,6 +44,12 @@ switch (command) {
     break;
   case "commit":
     handleCommitCommand();
+    break;
+  case "branch":
+    handleBranchCommand();
+    break;
+  case "checkout":
+    handleCheckoutCommand();
     break;
   default:
     throw new Error(`Unknown command ${command}`);
@@ -133,5 +141,21 @@ function handleCommitCommand() {
   }
 
   const command = new CommitCommand(message);
+  command.execute();
+}
+
+function handleBranchCommand() {
+  const branchName = process.argv[3]; // Optional argument
+  const command = new BranchCommand(branchName);
+  command.execute();
+}
+
+function handleCheckoutCommand() {
+  const branchName = process.argv[3];
+  if (!branchName) {
+    console.error("fatal: branch name required");
+    process.exit(128);
+  }
+  const command = new CheckoutCommand(branchName);
   command.execute();
 }
