@@ -6,8 +6,6 @@ const GitClient = require("./git/client");
 // Commands
 const { CatFileCommand } = require("./git/commands");
 
-console.error("Logs from your program will appear here!");
-
 const gitClient = new GitClient();
 
 const command = process.argv[2];
@@ -24,17 +22,14 @@ switch (command) {
 }
 
 function createGitDirectory() {
-  fs.mkdirSync(path.join(process.cwd(), ".git"), { recursive: true });
-  fs.mkdirSync(path.join(process.cwd(), ".git", "objects"), {
+  const gitPath = path.join(process.cwd(), ".git");
+  fs.mkdirSync(path.join(gitPath, "objects"), {
     recursive: true,
   });
-  fs.mkdirSync(path.join(process.cwd(), ".git", "refs"), { recursive: true });
+  fs.mkdirSync(path.join(gitPath, "refs"), { recursive: true });
 
-  fs.writeFileSync(
-    path.join(process.cwd(), ".git", "HEAD"),
-    "ref: refs/heads/main\n"
-  );
-  console.log("Initialized git directory");
+  fs.writeFileSync(path.join(gitPath, "HEAD"), "ref: refs/heads/main\n");
+  console.log(`Initialized empty Git repository in ${gitPath}/`);
 }
 
 function handleCatFileCommand() {

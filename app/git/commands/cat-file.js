@@ -29,15 +29,21 @@ class CatFileCommand {
           );
 
           if (!fs.existsSync(completePath)) {
-            throw new Error(`Object ${commitSHA} not found`);
+            // Git exits with a non-zero status code and prints to stderr
+            console.error(`fatal: Not a valid object name ${commitSHA}`);
+            process.exit(1); // Exit to match git's behavior
           }
 
           const fileContent = fs.readFileSync(completePath);
 
-          const outputBuffer = zlib.inflateSync(fileContent);
-          const output = outputBuffer.toString();
-
-          process.stdout.write(output);
+          const decompressedContent = zlib.inflateSync(fileContent);
+          // The content is in the format "blob <size>\0<actual_content>"
+          // We need to find the null byte to separate the header from the content
+          const nullByteIndex = decompressedContent.indexOf(0);
+          // Everything after the null byte is the content we want to print
+          const content = decompressedContent.subarray(nullByteIndex + 1);
+          // Write content to stdout, but without a trailing newline, just like `git cat-file -p`
+          process.stdout.write(content);
         }
         break;
     }
