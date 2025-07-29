@@ -1,59 +1,173 @@
-[![progress-banner](https://backend.codecrafters.io/progress/git/de86bc1a-91b5-46f2-8cbd-affc43e08ccf)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+# Git from Scratch in Node.js
 
-This is a starting point for JavaScript solutions to the
-["Build Your Own Git" Challenge](https://codecrafters.io/challenges/git).
+## Project Description
 
-In this challenge, you'll build a small Git implementation that's capable of
-initializing a repository, creating commits and cloning a public repository.
-Along the way we'll learn about the `.git` directory, Git objects (blobs,
-commits, trees etc.), Git's transfer protocols and more.
+This project is a simplified implementation of the version control system Git, built entirely from scratch using Node.js. Its primary goal is to demystify the inner workings of Git by recreating its fundamental objects (blobs, trees, commits) and core commands from first principles.
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+It is designed to be run from the command line and provides a backend-only implementation of Git's core features. By building this, we can gain a deeper understanding of how Git tracks files, manages history, and enables powerful workflows like branching and merging.
 
-# Passing the first stage
+---
 
-The entry point for your Git implementation is in `app/main.js`. Study and
-uncomment the relevant code, and push your changes to pass the first stage:
+## Features Implemented
 
-```sh
-git commit -am "pass 1st stage" # any msg
-git push origin master
+This implementation includes the following core Git commands:
+
+- **Low-Level ("Plumbing") Commands:**
+  - `init`: Initializes a new `.git` directory.
+  - `hash-object`: Creates a blob object from a file.
+  - `cat-file`: Inspects the content of a Git object.
+  - `write-tree`: Creates a tree object from the current directory.
+  - `ls-tree`: Lists the contents of a tree object.
+  - `commit-tree`: Creates a commit object from a tree.
+- **High-Level ("Porcelain") Commands:**
+  - `add`: Stages files for the next commit.
+  - `commit`: Creates a new commit with staged changes.
+  - `branch`: Manages branches (creation and listing).
+  - `checkout`: Switches between branches.
+  - `merge`: Merges one branch into another (supports fast-forward and three-way merges).
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18.x or later recommended)
+
+### Installation & Setup
+
+1.  **Clone the repository (or download the source):**
+
+    ```bash
+    git clone git@github.com:shourya-r/Git-From-Scratch.git
+    cd Git-From-Scratch
+    ```
+
+2.  **No dependencies are required!** The project uses only the built-in `fs`, `path`, `crypto`, and `zlib` modules from Node.js.
+
+### Running Commands
+
+All commands are run through the `app/main.js` entry point. The general format is:
+
+```bash
+node app/main.js <command> [arguments...]
 ```
 
-That's all!
+To test the commands, it's recommended to create a separate directory:
 
-# Stage 2 & beyond
-
-Note: This section is for stages 2 and beyond.
-
-1. Ensure you have `node (21)` installed locally
-1. Run `./your_program.sh` to run your Git implementation, which is implemented
-   in `app/main.js`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
-
-# Testing locally
-
-The `your_program.sh` script is expected to operate on the `.git` folder inside
-the current working directory. If you're running this inside the root of this
-repository, you might end up accidentally damaging your repository's `.git`
-folder.
-
-We suggest executing `your_program.sh` in a different folder when testing
-locally. For example:
-
-```sh
-mkdir -p /tmp/testing && cd /tmp/testing
-/path/to/your/repo/your_program.sh init
+```bash
+mkdir my-repo
+cd my-repo
 ```
 
-To make this easier to type out, you could add a
-[shell alias](https://shapeshed.com/unix-alias/):
+And then run all commands from within that directory, referencing the `main.js` file (e.g., `node ../app/main.js init`).
 
-```sh
-alias mygit=/path/to/your/repo/your_program.sh
+---
 
-mkdir -p /tmp/testing && cd /tmp/testing
-mygit init
+## Command Usage Guide
+
+Here is how to use each of the high-level commands to manage a repository.
+
+### 1. `init`
+
+Initializes a new Git repository in the current directory.
+
+```bash
+node ../app/main.js init
+# Expected Output: Initialized empty Git repository in .../.git/
 ```
+
+### 2. `add`
+
+Stages a file, preparing it for the next commit.
+
+```bash
+# Create a file
+echo "Hello, World!" > file1.txt
+
+# Stage the file
+node ../app/main.js add file1.txt
+```
+
+### 3. `commit`
+
+Records the staged changes into the repository's history.
+
+```bash
+node ../app/main.js commit -m "My first commit"
+# Expected Output: [main <sha>] My first commit
+```
+
+### 4. `branch`
+
+Manages branches.
+
+```bash
+# List all branches (current branch is marked with *)
+node ../app/main.js branch
+
+# Create a new branch named 'feature'
+node ../app/main.js branch feature
+```
+
+### 5. `checkout`
+
+Switches the current working branch.
+
+```bash
+# Switch to the 'feature' branch
+node ../app/main.js checkout feature
+# Expected Output: Switched to branch 'feature'
+```
+
+### 6. `merge`
+
+Merges the specified branch into the current branch.
+
+**Scenario: Fast-Forward Merge**
+
+```bash
+# On branch 'main', create and checkout 'feature'
+node ../app/main.js branch feature
+node ../app/main.js checkout feature
+
+# Make a commit on 'feature'
+echo "new feature" > feature.txt
+node ../app/main.js add feature.txt
+node ../app/main.js commit -m "Add new feature"
+
+# Switch back to main and merge
+node ../app/main.js checkout main
+node ../app/main.js merge feature
+# Expected Output: Fast-forward
+```
+
+**Scenario: Three-Way Merge**
+
+```bash
+# After one commit, create a branch
+node ../app/main.js branch feature
+
+# Make a commit on main
+echo "main change" >> file1.txt
+node ../app/main.js add file1.txt
+node ../app/main.js commit -m "Commit on main"
+
+# Switch to feature and make a different commit
+node ../app/main.js checkout feature
+echo "feature change" >> file1.txt
+node ../app/main.js add file1.txt
+node ../app/main.js commit -m "Commit on feature"
+
+# Switch back to main and merge
+node ../app/main.js checkout main
+node ../app/main.js merge feature
+# Expected Output: Performing a three-way merge...
+```
+
+### Inspection Commands
+
+These are useful for debugging and seeing how Git works under the hood.
+
+- **`cat-file -p <sha>`**: Pretty-prints the content of any Git object (commit, tree, or blob).
+- **`ls-tree <tree-sha>`**: Lists the contents of a tree object, showing the files and directories it contains.
