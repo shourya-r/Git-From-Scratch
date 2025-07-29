@@ -1,3 +1,3 @@
 const CatFileCommand = require("./cat-file");
-
-module.exports = { CatFileCommand };
+const HashObjectCommand = require("./hash-object");
+module.exports = { CatFileCommand, HashObjectCommand };
