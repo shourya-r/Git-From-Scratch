@@ -10,6 +10,7 @@ const {
   LSTreeCommand,
   WriteTreeCommand,
   CommitTreeCommand,
+  AddCommand,
 } = require("./git/commands");
 
 const gitClient = new GitClient();
@@ -34,6 +35,9 @@ switch (command) {
     break;
   case "commit-tree":
     handleCommitTreeCommand();
+    break;
+  case "add":
+    handleAddCommand();
     break;
   default:
     throw new Error(`Unknown command ${command}`);
@@ -101,5 +105,15 @@ function handleCommitTreeCommand() {
   const commitMessage = process.argv[7];
 
   const command = new CommitTreeCommand(tree, commitSHA, commitMessage);
+  gitClient.run(command);
+}
+
+function handleAddCommand() {
+  const filepath = process.argv[3];
+  if (!filepath) {
+    console.error("fatal: you must specify a file to add.");
+    process.exit(128);
+  }
+  const command = new AddCommand(filepath);
   gitClient.run(command);
 }
