@@ -11,6 +11,7 @@ const {
   WriteTreeCommand,
   CommitTreeCommand,
   AddCommand,
+  CommitCommand,
 } = require("./git/commands");
 
 const gitClient = new GitClient();
@@ -39,6 +40,9 @@ switch (command) {
   case "add":
     handleAddCommand();
     break;
+  case "commit":
+    handleCommitCommand();
+    break;
   default:
     throw new Error(`Unknown command ${command}`);
 }
@@ -48,7 +52,8 @@ function createGitDirectory() {
   fs.mkdirSync(path.join(gitPath, "objects"), {
     recursive: true,
   });
-  fs.mkdirSync(path.join(gitPath, "refs"), { recursive: true });
+
+  fs.mkdirSync(path.join(gitPath, "refs", "heads"), { recursive: true });
 
   fs.writeFileSync(path.join(gitPath, "HEAD"), "ref: refs/heads/main\n");
   console.log(`Initialized empty Git repository in ${gitPath}/`);
@@ -116,4 +121,17 @@ function handleAddCommand() {
   }
   const command = new AddCommand(filepath);
   gitClient.run(command);
+}
+
+function handleCommitCommand() {
+  const messageFlag = process.argv[3];
+  const message = process.argv[4];
+
+  if (messageFlag !== "-m" || !message) {
+    console.error("fatal: commit message is required. Use -m <message>.");
+    process.exit(128);
+  }
+
+  const command = new CommitCommand(message);
+  command.execute();
 }

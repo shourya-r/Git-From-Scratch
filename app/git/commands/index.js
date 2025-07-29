@@ -4,6 +4,7 @@ const LSTreeCommand = require("./ls-tree");
 const WriteTreeCommand = require("./write-tree");
 const CommitTreeCommand = require("./commit-tree");
 const AddCommand = require("./add");
+const CommitCommand = require("./commit");
 module.exports = {
   CatFileCommand,
   HashObjectCommand,
@@ -11,4 +12,5 @@ module.exports = {
   WriteTreeCommand,
   AddCommand,
   CommitTreeCommand,
+  CommitCommand,
 };
